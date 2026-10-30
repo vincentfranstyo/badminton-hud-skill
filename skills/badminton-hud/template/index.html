@@ -3,7 +3,10 @@
   {"id":"p1","type":"string","label":"Player 1 (near, left)","default":"Player 1"},
   {"id":"p2","type":"string","label":"Player 2 (near, right)","default":"Player 2"},
   {"id":"p3","type":"string","label":"Player 3 (far, left)","default":"Player 3"},
-  {"id":"p4","type":"string","label":"Player 4 (far, right)","default":"Player 4"}
+  {"id":"p4","type":"string","label":"Player 4 (far, right)","default":"Player 4"},
+  {"id":"venue","type":"string","label":"Venue / court","default":""},
+  {"id":"colorA","type":"color","label":"Near-side team colour","default":"#3b8bff"},
+  {"id":"colorB","type":"color","label":"Far-side team colour","default":"#ff3b4e"}
 ]'>
   <head>
     <meta charset="UTF-8" />
@@ -22,7 +25,9 @@
       #title { left: 40px; top: 40px; padding: 10px 22px; font-size: 30px; font-weight: 700; letter-spacing: 1px; max-width: 760px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
       #title .A { color: var(--a); } #title .B { color: var(--b); } #title i { font-style: normal; opacity: .6; margin: 0 10px; font-size: 22px; }
       #clock { right: 40px; top: 40px; padding: 10px 22px; font-size: 30px; font-weight: 700; font-variant-numeric: tabular-nums; }
-      #cards { position: absolute; left: 40px; right: 40px; top: 120px; display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+      #venue { position: absolute; left: 40px; top: 102px; padding: 5px 14px; font-size: 18px; letter-spacing: 2px; opacity: .86; display: none; }
+      #cards { position: absolute; left: 40px; right: 40px; top: 145px; display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+      #venue[style*="display: none"] + #cards { top: 120px; }
       .card { position: relative; padding: 14px 18px; }
       .card .hd { display: flex; justify-content: space-between; align-items: baseline; }
       .card .nm { font-size: 30px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 700; letter-spacing: 2px; }
@@ -50,6 +55,7 @@
         <canvas id="fx" width="1080" height="1920"></canvas>
         <div id="title" class="panel"></div>
         <div id="clock" class="panel">00:00.0</div>
+        <div id="venue" class="panel"></div>
         <div id="cards"></div>
         <div id="speed" class="panel">
           <div class="lbl">SHUTTLE SPEED</div>
@@ -65,7 +71,11 @@
       const OY = (1920 - T.h * S) / 2;
       const { W, L, NET } = T.court, H = T.H;
       const V = window.__hyperframes.getVariables(), NAMES = [V.p1, V.p2, V.p3, V.p4], TEAM = ["A", "A", "B", "B"];
-      const COL = { A: "#3b8bff", B: "#ff3b4e" };
+      const COL = { A: V.colorA, B: V.colorB };
+      document.documentElement.style.setProperty("--a", V.colorA);
+      document.documentElement.style.setProperty("--b", V.colorB);
+      const venue = document.getElementById("venue");
+      if (V.venue.trim()) { venue.textContent = V.venue; venue.style.display = "block"; }
       const esc = (s) => String(s).replace(/[&<>"]/g, (c) => `&#${c.charCodeAt(0)};`);
       document.getElementById("title").innerHTML = `<span class="A">${esc(NAMES[0])}, ${esc(NAMES[1])}</span><i>vs</i><span class="B">${esc(NAMES[2])}, ${esc(NAMES[3])}</span>`;
 
